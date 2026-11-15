@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+models/cache/
+results/*.csv
+results/*.json
+logs/*.log
+
+# Local runtime and packaging
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+.env
+web/uploads/*
+web/reports/*
+collection/collection.tsv

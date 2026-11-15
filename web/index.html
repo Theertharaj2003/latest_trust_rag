@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a17"><title>TrustRAG — Evidence Security Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/styles.css">
+  <style>
+    .main {
+      width: 100%;
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 0 40px 32px;
+    }
+
+    .topbar {
+      height: 76px;
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .topbar .brand {
+      flex: 0 0 auto;
+      padding: 0;
+      color: var(--ink);
+    }
+
+    .topbar .brand small {
+      color: var(--muted);
+    }
+
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-left: auto;
+    }
+
+    .top-nav .nav {
+      width: auto;
+      color: #64736a;
+      padding: 10px 12px;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .top-nav .nav span {
+      display: none;
+    }
+
+    .top-nav .nav:hover {
+      background: #eaf3ec;
+      color: #216d4e;
+    }
+
+    .top-nav .nav.active {
+      background: #e4f2e8;
+      color: #216d4e;
+      box-shadow: none;
+    }
+
+    .top-nav .nav i {
+      background: #d7ecdf;
+      color: #216d4e;
+    }
+
+    .metrics-section {
+      margin-top: 24px;
+    }
+
+    .metrics-section > .muted {
+      margin-bottom: 12px;
+    }
+
+    .metrics-section .stats-grid {
+      margin-top: 12px;
+    }
+
+    @media (max-width: 1050px) {
+      .main {
+        padding-right: 24px;
+        padding-left: 24px;
+      }
+
+      .topbar {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 15px 0;
+      }
+
+      .top-nav {
+        order: 3;
+        width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        margin: 0;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .main {
+        padding-right: 15px;
+        padding-left: 15px;
+      }
+
+      .topbar .brand small,
+      .api-status {
+        display: none;
+      }
+
+      .top-nav .nav {
+        padding: 9px 10px;
+        font-size: 11px;
+      }
+    }
+
+    #scanDetail .finding:has(.signal-tag) {
+      border-color: #e4a0a0;
+      background: #fffafa;
+      box-shadow: 0 0 0 2px #ffebeb;
+    }
+
+    #scanDetail .finding:has(.signal-tag) .finding-head {
+      background: #ffebeb;
+      color: #9e3434;
+    }
+
+    #scanDetail .finding:has(.signal-tag) .finding-no {
+      color: #b84747;
+    }
+
+    #scanDetail .finding:has(.signal-tag) .finding-body {
+      border-top: 1px solid #f4cccc;
+      background: linear-gradient(90deg, #ffebeb 0 3px, transparent 3px);
+      color: #6d3030;
+    }
+
+    #scanDetail .finding:has(.signal-tag) .signal-tag {
+      color: #9e3434;
+      background: #fff;
+      border: 1px solid #e8b3b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <main class="main">
+      <header class="topbar">
+        <a class="brand" href="/" data-goto="overview"><span class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 27 6v8c0 7-4.8 12.4-11 16C9.8 26.4 5 21 5 14V6z"/><path d="m10 16 4 4 8-9"/></svg></span><span><b>TrustRAG</b><small>Evidence security</small></span></a>
+        <nav class="top-nav" aria-label="Main navigation">
+          <button class="nav active" data-view="overview">Overview</button>
+          <button class="nav" data-view="scan">Document scanner <i id="navScanCount">0</i></button>
+          <button class="nav" data-view="ask">Ask your corpus</button>
+          <button class="nav" data-view="dataset">MS MARCO Dataset</button>
+          <button class="nav" data-view="experiments">Experiment metrics</button>
+        </nav>
+        <div class="top-actions"><span id="crumbTitle" hidden>Overview</span><span class="api-status"><span class="pulse" id="apiPulse"></span><span id="apiStatus">Connecting API…</span></span><button class="icon-btn" id="refreshBtn" title="Refresh status" aria-label="Refresh status">↻</button></div>
+      </header>
+      <section class="view active" id="view-overview">
+        <div class="hero"><div><div class="eyebrow"><span class="eyebrow-dot"></span> TRUST-AWARE · SELF-HEALING · HYBRID RETRIEVAL</div><h1>Evidence you can<br><em>inspect and trust.</em></h1><p>Scan documents for suspicious instructions, quarantine risky passages, and query retained evidence with a transparent retrieval pipeline.</p><div class="hero-actions"><button class="btn primary" data-goto="scan">＋ Scan documents</button><button class="btn secondary" data-goto="ask">Ask a question <span>↗</span></button></div></div><div class="hero-art"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="shield-large"><svg viewBox="0 0 120 140"><path d="M60 5 105 22v36c0 31-20 56-45 73C35 114 15 89 15 58V22z"/><path d="m37 66 15 15 32-36"/></svg></div><div class="floating-tag tag-top"><span class="mini-dot green"></span> Evidence verified</div><div class="floating-tag tag-bottom"><span class="mini-dot amber"></span> Threats isolated</div></div></div>
+        <div class="stats-grid"><article class="stat-card"><div class="stat-head"><span>Documents scanned</span><span class="stat-icon">▤</span></div><div class="stat-value" id="statDocs">0</div><div class="stat-foot">Files processed this session</div></article><article class="stat-card"><div class="stat-head"><span>Passages quarantined</span><span class="stat-icon amber-icon">⛨</span></div><div class="stat-value" id="statQuarantine">0</div><div class="stat-foot">Flagged by configured signals</div></article><article class="stat-card"><div class="stat-head"><span>Queries processed</span><span class="stat-icon">⌕</span></div><div class="stat-value" id="statQueries">0</div><div class="stat-foot">RAG pipeline requests</div></article><article class="stat-card"><div class="stat-head"><span>Runtime device</span><span class="stat-icon">◈</span></div><div class="stat-value stat-small" id="statDevice">Checking</div><div class="stat-foot" id="statGpuFoot">Hardware status</div></article></div>
+        <div class="content-grid"><section class="panel upload-panel"><div class="panel-title"><div><span class="panel-kicker">01 / INGEST</span><h2>Inspect a document</h2></div><span class="panel-symbol">↥</span></div><p class="muted">Drop a PDF, DOCX, TXT or Markdown file. TrustRAG checks for suspicious instruction patterns and produces a reviewed text copy with flagged passages quarantined.</p><div class="dropzone" id="dropzone"><input type="file" id="fileInput" accept=".pdf,.docx,.txt,.md" hidden><div class="upload-glyph">↑</div><b>Drop your files here</b><span>or <button class="text-button" id="browseBtn">browse files</button></span><small>PDF · DOCX · TXT · MD · up to 15 MB</small></div><div class="upload-note"><span>ⓘ</span> Scanned-image PDFs need OCR. This scanner detects configured suspicious patterns; it cannot prove that every fact is true.</div><div id="quickScanResult"></div></section><section class="panel system-panel"><div class="panel-title"><div><span class="panel-kicker">02 / SYSTEM</span><h2>Runtime status</h2></div><span class="live-badge"><span></span> LIVE</span></div><div class="system-row"><div class="sys-icon">⌘</div><div class="sys-copy"><b>API service</b><small>FastAPI · local endpoint</small></div><span class="status-pill good" id="serviceBadge">Checking</span></div><div class="system-row"><div class="sys-icon">◈</div><div class="sys-copy"><b>Compute device</b><small id="gpuName">Detecting device</small></div><span class="status-pill" id="gpuBadge">—</span></div><div class="system-row"><div class="sys-icon">⛨</div><div class="sys-copy"><b>Hybrid detection</b><small>Text patterns + anomaly signals</small></div><span class="status-pill good">Enabled</span></div><div class="system-row"><div class="sys-icon">⌕</div><div class="sys-copy"><b>Retrieval pipeline</b><small>BM25 + dense/TF-IDF fallback</small></div><span class="status-pill good">Ready</span></div><div class="system-foot"><span class="pulse"></span><span id="systemFootText">Checking local API…</span><a href="/docs" target="_blank" rel="noreferrer">API docs ↗</a></div></section></div>
+        <section class="panel recent-panel"><div class="panel-title"><div><span class="panel-kicker">03 / SESSION</span><h2>Recent document scans</h2></div><button class="text-button" data-goto="scan">View scanner →</button></div><div class="table-wrap"><table><thead><tr><th>DOCUMENT</th><th>RISK</th><th>FLAGGED</th><th>STATUS</th><th></th></tr></thead><tbody id="recentScans"><tr><td colspan="5" class="empty-cell">No documents scanned yet. Upload a file to begin.</td></tr></tbody></table></div></section>
+        <section class="metrics-section">
+          <div class="panel-title"><div><span class="panel-kicker">04 / RESEARCH</span><h2>Experiment metrics</h2></div><button class="text-button" data-goto="experiments">Full evaluation →</button></div>
+          <p class="muted">Results from the local controlled experiment output. These prototype metrics are not external benchmark results.</p>
+          <div id="dashboardExperimentSummary" class="stats-grid metrics-grid"><div class="empty-state"><h3>Loading experiment metrics…</h3></div></div>
+        </section>
+      </section>
+      <section class="view" id="view-scan"><div class="page-heading"><div><div class="eyebrow">DOCUMENT INTELLIGENCE</div><h1>Document scanner</h1><p>Inspect content signals, quarantine suspicious passages, and export a reviewed text copy.</p></div><button class="btn primary" id="scanNewBtn">＋ Scan new file</button></div><div class="panel scanner-drop"><div class="dropzone large" id="dropzoneLarge"><input type="file" id="fileInputLarge" accept=".pdf,.docx,.txt,.md" hidden><div class="upload-glyph">↑</div><b>Drop documents to inspect</b><span>or <button class="text-button" id="browseBtnLarge">choose from computer</button></span><small>Supported: PDF, DOCX, TXT, Markdown · Maximum 15 MB</small></div></div><div id="scanDetail" class="scan-detail"><div class="empty-state"><div class="empty-illustration">⌁</div><h3>Waiting for a document</h3><p>Your scan report, flagged passages and cleaned-text export will appear here.</p></div></div></section>
+      <section class="view" id="view-ask"><div class="page-heading"><div><div class="eyebrow">RETRIEVAL · VERIFICATION · RECOVERY</div><h1>Ask your corpus</h1><p>Query uploaded documents, the controlled demo corpus, or a loaded MS MARCO passage sample.</p></div><span class="tag-soft">Hybrid retrieval</span></div><section class="panel query-panel"><label for="queryInput">YOUR QUESTION</label><textarea id="queryInput" rows="3" placeholder="Ask a question grounded in your uploaded documents…"></textarea><div class="query-controls"><label class="toggle"><input type="checkbox" id="healToggle" checked><span class="toggle-ui"></span><span>Enable self-healing</span></label><label class="toggle"><input type="checkbox" id="demoToggle"><span class="toggle-ui"></span><span>Use demo corpus</span></label><label class="toggle"><input type="checkbox" id="msmarcoToggle"><span class="toggle-ui"></span><span>Use MS MARCO</span></label><button class="btn primary" id="runQueryBtn">Run analysis <span>↗</span></button></div><div class="hint">Queries use retained passages only. Suspicious lines removed by the document scanner are not sent to retrieval.</div></section><div id="queryResult"></div></section>
+      <section class="view" id="view-dataset">
+        <div class="page-heading"><div><div class="eyebrow">BENCHMARK CORPUS · MICROSOFT RESEARCH</div><h1>MS MARCO Dataset Lab</h1><p>Load a bounded sample of the official MS MARCO passage collection and use it as the retrieval corpus for TrustRAG.</p></div><span class="tag-soft">Passage ranking</span></div>
+        <div class="content-grid">
+          <section class="panel"><div class="panel-title"><div><span class="panel-kicker">01 / DATA SOURCE</span><h2>Connect your local dataset</h2></div><span class="panel-symbol">▦</span></div>
+            <p class="muted">Download the <b>passage ranking collection</b> from the official MS MARCO dataset page, extract it if needed, then paste the full local path to the collection TSV/TXT, compressed TSV, or TAR.GZ archive.</p>
+            <div class="dataset-callout"><b>Official dataset source</b><p>MS MARCO is a large-scale information retrieval dataset. The passage collection has about 8.8 million passages; loading all records into memory is not recommended for this local prototype.</p><a href="https://microsoft.github.io/msmarco/Datasets" target="_blank" rel="noreferrer">Open official dataset page ↗</a></div>
+            <label class="field-label" for="datasetPath">LOCAL FILE PATH</label><input class="text-input" id="datasetPath" placeholder="C:\Users\Admin\Downloads\collection.tsv" autocomplete="off">
+            <label class="field-label" for="datasetMaxRecords">MAXIMUM PASSAGES TO LOAD</label><select class="text-input" id="datasetMaxRecords"><option value="1000">1,000 · quick smoke test</option><option value="5000">5,000 · lightweight</option><option value="10000" selected>10,000 · recommended start</option><option value="25000">25,000 · more coverage</option><option value="50000">50,000 · memory intensive</option><option value="100000">100,000 · heavy</option></select>
+            <div class="btn-row"><button class="btn primary" id="loadDatasetBtn">Load dataset sample ↗</button><button class="btn secondary" id="refreshDatasetBtn">↻ Refresh status</button></div><div class="hint">Path is read by the local Python server, so it must be a path visible on the same computer running FastAPI. A bounded sample is streamed and loaded into memory.</div>
+          </section>
+          <section class="panel system-panel"><div class="panel-title"><div><span class="panel-kicker">02 / DATASET STATUS</span><h2>Loaded corpus</h2></div><span class="live-badge"><span></span> LOCAL</span></div><div class="dataset-status" id="datasetStatus"><div class="empty-state"><h3>Dataset not loaded</h3><p>Connect a local MS MARCO collection file to begin.</p></div></div></section>
+        </div>
+        <section class="panel" style="margin-top:16px"><div class="panel-title"><div><span class="panel-kicker">03 / RELEVANCE BENCHMARK</span><h2>Evaluate MS MARCO ranking</h2></div><span class="tag-soft">BM25 · MRR@10</span></div>
+          <p class="muted">Choose an official query TSV (<code>qid TAB query</code>) and relevance judgments (<code>qid 0 pid relevance</code>). This evaluates a lexical BM25 baseline against only the loaded passage subset. It is not a poisoning benchmark.</p>
+          <div class="evaluation-inputs"><label class="field-label" for="evalQueries">QUERY TSV<input id="evalQueries" type="file" accept=".tsv,.txt"></label><label class="field-label" for="evalQrels">QRELS TSV<input id="evalQrels" type="file" accept=".tsv,.txt"></label><label class="field-label" for="evalMaxQueries">EVALUATE FIRST N QUERIES<select class="text-input" id="evalMaxQueries"><option value="10">10</option><option value="50" selected>50</option><option value="100">100</option></select></label></div>
+          <div class="btn-row"><button class="btn primary" id="evaluateDatasetBtn">Run ranking evaluation ↗</button><button class="btn secondary" id="exportBenchmarkBtn" disabled>Export results JSON</button><button class="btn secondary" id="unloadDatasetBtn">Unload dataset</button></div>
+          <div id="rankingResults" class="ranking-results"><p class="muted">Load a corpus and supply query/qrels files to calculate ranking metrics.</p></div>
+        </section>
+        <section class="panel" style="margin-top:16px"><div class="panel-title"><div><span class="panel-kicker">03 / RESEARCH DESIGN</span><h2>How MS MARCO is used here</h2></div></div><div class="dataset-grid"><article><b>Retrieval corpus</b><p>Passages from MS MARCO are used as real-world text candidates for hybrid retrieval and evidence inspection.</p></article><article><b>Ranking evaluation</b><p>Use query/qrels files separately to evaluate ranking quality with MRR@10 or other retrieval metrics. This UI loader currently loads the passage collection only.</p></article><article><b>Poisoning evaluation</b><p>MS MARCO is not itself a poisoning-labelled dataset. Security experiments require a separate, explicitly documented attack-injection protocol and held-out labels.</p></article></div></section>
+      </section>
+      <section class="view" id="view-experiments"><div class="page-heading"><div><div class="eyebrow">RESEARCH EVALUATION</div><h1>Experiment metrics</h1><p>Summary read from the project's local experiment output.</p></div><button class="btn secondary" id="refreshMetricsBtn">↻ Refresh</button></div><div id="experimentSummary" class="stats-grid metrics-grid"><div class="empty-state"><h3>Loading experiment output…</h3></div></div><div class="panel disclaimer-panel"><span class="notice-icon">ⓘ</span><div><b>Interpretation note</b><p>Metrics from the included controlled demo corpus are development checks, not external benchmark results. A zero attack success rate alone does not prove robust detection; check for label leakage and evaluate on held-out data.</p></div></div></section>
+      <footer><span>TrustRAG <b>Research Console</b></span><span>Trust-aware evidence · Local prototype</span></footer>
+    </main>
+  </div>
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+  <script src="/assets/app.js?v=2" defer></script>
+</body>
+</html>

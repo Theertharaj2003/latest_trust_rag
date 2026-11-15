@@ -1,0 +1,5 @@
+101	Python is a programming language used for web development, automation and machine learning.
+102	A retrieval-augmented generation system retrieves source documents before creating a response.
+103	BM25 is a lexical ranking algorithm based on term frequency and inverse document frequency.
+104	Source attribution links a generated claim to the retrieved document that supports it.
+105	An academic benchmark should use held-out queries and annotated relevance judgments.
