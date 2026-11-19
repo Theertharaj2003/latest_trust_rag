@@ -1,0 +1,18 @@
+[build]
+  command = "node --check netlify/server/index.mjs"
+  publish = "web"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+# Keep the URLs used by the original FastAPI frontend.
+[[redirects]]
+  from = "/assets/*"
+  to = "/:splat"
+  status = 200
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "private, no-store"
+    X-Content-Type-Options = "nosniff"

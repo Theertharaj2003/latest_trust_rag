@@ -2,12 +2,26 @@
 
 TrustRAG is a local research prototype for trust-aware hybrid retrieval, suspicious-content triage, evidence verification, source attribution and bounded self-healing. It uses **FastAPI + a custom HTML/CSS/JavaScript frontend**. Streamlit has been removed from the runtime.
 
-## Quick start (Windows / VS Code)
+## Netlify deployment
+
+The site runs the dashboard in `web/` with a **Node.js 24 Netlify Server** backend. `netlify.toml` replaces the incorrect Hugo command and publishes the existing frontend; there is no static Python build step. Python dependencies live in `python/requirements.txt` so Netlify does not automatically install the local ML stack during deployment.
+
+The deployed API supports PDF/DOCX/TXT/Markdown scanning, quarantine reports, cleaned downloads, retained-corpus and demo queries, source attribution, bounded healing, query history, MS MARCO sample uploads, BM25 ranking evaluation and result export. Netlify Database stores reports, retained text, query results, dataset samples and evaluations. The schema is in `db/schema.ts`; generated migrations in `netlify/database/migrations/` are applied automatically during deployment.
+
+Each browser receives an anonymous, HttpOnly workspace cookie. Records are scoped to that workspace across server restarts. This does not create a user account or support cross-device recovery: clearing cookies loses access. Saved scans can be deleted from their detail view; unloading a dataset removes its saved sample and evaluation. Original files are unchanged on your device; the hosted service saves extracted reports and retained text, not original binaries.
+
+The hosted research runtime uses BM25 + TF-IDF cosine retrieval, lexical reranking/verification, and extractive answers. It runs no GPU, neural embedding, learned NLI or generative model. Its heuristic scores are not factual guarantees. Historical experiment metrics are explicitly labelled as bundled Python demo output and are not recalculated by the Node runtime. Tokenization and normalization differ slightly from scikit-learn; this is a functional port, not a numerically identical benchmark implementation. Queries with no matching evidence abstain.
+
+Dataset Lab samples TSV/TXT, gzip and TAR.GZ files in the browser before uploading, with a hosted limit of 10,000 passages and 15 MB. Evaluation accepts UTF-8 queries/qrels up to 10 MB each and 100 queries, and counts missing gold passages as misses. Documents are limited to 15 MB, 300 PDF pages, 2 million extracted characters, and 10,000 lines; a browser workspace holds up to 100 documents and 4 million retained characters. PDF page processing has a 12-second budget between pages. Scanned-image PDFs require OCR. The local Python application retains its original dataset-path workflow.
+
+Use Node.js 24 and `npm ci`, then `netlify dev --port 8889` for platform-aware local development. Run `npm test` for the Node API and research tests. `/docs` lists the deployed API routes, payload formats and limits. The Python application below remains available for local research and optional learned models; its in-memory behavior differs from the persisted hosted runtime.
+
+## Local Python quick start (Windows / VS Code)
 
 1. Extract this folder and open it in VS Code.
 2. Open a PowerShell terminal in the project root.
 3. Run `py -3 -m venv .venv` (Python 3.10 or newer).
-4. Run `\.venv\Scripts\python.exe -m pip install -r requirements.txt`.
+4. Run `\.venv\Scripts\python.exe -m pip install -r python/requirements.txt`.
 5. Run `\.venv\Scripts\python.exe -m uvicorn api.main:app --host 127.0.0.1 --port 8001`.
 6. Open `http://127.0.0.1:8001`. Interactive API docs are at `http://127.0.0.1:8001/docs`.
 
@@ -40,7 +54,7 @@ Alternatively, double-click `start.bat`; it creates `.venv` if needed, installs 
 1. The document scanner is an **explainable heuristic suspicious-content scanner**, not a malware scanner, a fact-checking oracle, or a trained poisoning classifier. A passage with no matched pattern may still be false or malicious; a flagged passage may be legitimate. It does not claim to identify every corrupted or malicious passage.
 2. “Automatic correction” means quarantining configured suspicious passages and creating a derived text copy without those passages. It does **not** invent replacement facts or silently rewrite factual claims. Replacement evidence must be retrieved and verified; a human should review the cleaned output.
 3. Scanned-image PDFs are not OCR'd in this build. Encrypted PDFs, malformed files and legacy `.doc` files are rejected with an error. Use `.docx` instead.
-4. Uploaded data and scan reports are held in process memory and cleared when the server restarts. This is a local prototype, not a multi-user production service. Do not expose it to a public network without authentication, storage controls, upload scanning and deployment hardening.
+4. In the local Python runtime, uploaded data and scan reports are held in process memory and cleared when the server restarts. This is a local prototype, not a multi-user production service. Do not expose it to a public network without authentication, storage controls, upload scanning and deployment hardening.
 5. Learned models are optional and not downloaded by default. The default configuration is deterministic and may use TF-IDF/lexical fallbacks. Do not claim that BGE, DeBERTa, NLI or a local LLM ran unless the model is installed, enabled, and the runtime logs confirm it.
 6. GPU availability depends on a CUDA-enabled PyTorch wheel compatible with your driver. Your earlier environment showed CPU-only PyTorch; GPU execution must be verified separately. For an RTX 3050 6 GB, start with embeddings/reranking/NLI individually and avoid loading all large models at once.
 7. Demo experiment metrics are for implementation checks only, not dissertation benchmark results. The detector must not use ground-truth poison labels; evaluation labels belong only in the evaluator. Validate on a held-out corpus with independent annotations and multiple seeds.

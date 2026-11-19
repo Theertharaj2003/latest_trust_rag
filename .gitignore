@@ -16,3 +16,7 @@ __pycache__/
 web/uploads/*
 web/reports/*
 collection/collection.tsv
+
+# Netlify Node runtime
+node_modules/
+.netlify/

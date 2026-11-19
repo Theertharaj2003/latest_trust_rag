@@ -10,3 +10,5 @@
 .evaluation-inputs input[type=file]{display:block;max-width:100%;font-size:12px;color:var(--text,#23352d)}
 .ranking-results{margin-top:20px}.ranking-results .ranking-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.ranking-kpis article{border:1px solid #dfe7e2;border-radius:12px;padding:16px}.ranking-kpis small{display:block;color:#66756d}.ranking-kpis b{display:block;margin-top:6px;font-size:24px}.ranking-results .hint{margin-top:12px}
 @media(max-width:850px){.evaluation-inputs{grid-template-columns:1fr}.ranking-results .ranking-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.text-input[hidden], .field-label[hidden] { display: none; }

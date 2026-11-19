@@ -13,7 +13,7 @@ if not exist ".venv\Scripts\python.exe" (
   pause
   exit /b 1
 )
-".venv\Scripts\python.exe" -m pip install -r requirements.txt
+".venv\Scripts\python.exe" -m pip install -r python/requirements.txt
 if errorlevel 1 (
   echo Could not install dependencies. Please read the pip error above.
   pause
