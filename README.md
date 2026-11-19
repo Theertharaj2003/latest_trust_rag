@@ -2,12 +2,28 @@
 
 TrustRAG is a local research prototype for trust-aware hybrid retrieval, suspicious-content triage, evidence verification, source attribution and bounded self-healing. It uses **FastAPI + a custom HTML/CSS/JavaScript frontend**. Streamlit has been removed from the runtime.
 
-## Quick start (Windows / VS Code)
+## Netlify deployment
+
+The hosted application uses a Netlify Node.js 24 server and Netlify Database. `netlify.toml` replaces the incorrect Hugo command with static asset preparation; Hugo is not used. Python research dependencies live in `requirements/local.txt` so Netlify does not install PyTorch and the local research stack during deployment.
+
+The dashboard and `/api/*` run on the same origin. Scans, extracted/cleaned text, query history, dataset samples and ranking results are stored in Postgres. Database migrations are in `netlify/database/migrations` and are applied by Netlify during deployment. No database credentials need to be added. Each browser receives an HttpOnly workspace cookie; keep that cookie to return to the same workspace. This is browser workspace isolation, not a user-account system, and clearing the cookie loses access to that workspace.
+
+The hosted retrieval implementation uses BM25 plus **unigram TF-IDF**, lexical reranking, heuristic trust/verification, extractive answers and bounded quarantine/retrieval retries. It does not run the optional local learned models or CUDA. Results may differ from the Python implementation's unigram/bigram TF-IDF fallback. Original uploads remain unchanged on the user's computer; extracted text and scan reports are saved, not original file binaries. Hosted API reference: `/docs`.
+
+In Dataset Lab, upload an extracted UTF-8 collection TSV/TXT sample (15 MB maximum, up to 10,000 passages). Computer filesystem paths and compressed multi-gigabyte archives are not accepted by the hosted server. Upload queries and qrels separately (10 MB each, up to 100 evaluated queries). Missing relevant passages count as zero in MRR/Hit metrics. Replacing or unloading a sample invalidates its previous evaluation. The hosted scanner accepts PDF/DOCX/TXT/MD up to 15 MB; extracted documents are limited to 500,000 characters and 10,000 lines. Workspaces accept up to 100 documents with a 2-million-character corpus threshold.
+
+Controlled experiment metrics remain unavailable until measured research output is supplied; the hosted service does not fabricate benchmark results. Use the Python tools below for local model research and experiments. The local FastAPI API continues to support JSON dataset loading by local filesystem path; the hosted dashboard uses multipart dataset uploads.
+
+Install hosted dependencies with `npm ci`; run `npm test` for the Node API and pipeline checks. Tests cover scanning/quarantine, downloads, query history, workspace isolation, API recreation with an injected repository double, dataset lifecycle, ranking denominators, and input validation. A real database connection and migration application are verified by the deployment environment, not those unit tests. After changing `db/schema.ts`, run `npm run db:generate -- --name <descriptive_name>` and include the migration.
+
+## Local Python research setup
+
+### Quick start (Windows / VS Code)
 
 1. Extract this folder and open it in VS Code.
 2. Open a PowerShell terminal in the project root.
 3. Run `py -3 -m venv .venv` (Python 3.10 or newer).
-4. Run `\.venv\Scripts\python.exe -m pip install -r requirements.txt`.
+4. Run `\.venv\Scripts\python.exe -m pip install -r requirements/local.txt`.
 5. Run `\.venv\Scripts\python.exe -m uvicorn api.main:app --host 127.0.0.1 --port 8001`.
 6. Open `http://127.0.0.1:8001`. Interactive API docs are at `http://127.0.0.1:8001/docs`.
 
@@ -70,15 +86,15 @@ start.bat         Windows one-click launcher
 ```
 
 
-## MS MARCO dataset integration
+## Local MS MARCO dataset integration
 
 The UI includes an **MS MARCO Dataset Lab** for loading a bounded sample of the official passage-ranking collection into the local TrustRAG retrieval corpus.
 
 1. Open the official dataset page: https://microsoft.github.io/msmarco/Datasets
 2. Download the passage collection (`collection.tar.gz`, approximately 2.9 GB) or use an extracted collection TSV. Extracting the archive first is recommended if you have enough disk space.
 3. Start TrustRAG and open **MS MARCO Dataset** in the sidebar.
-4. Paste the dataset path as seen by the machine running the FastAPI server. Example Windows path: `C:\Users\Admin\Downloads\collection.tsv`.
-5. Choose a sample limit (start with 1,000 or 10,000) and click **Load dataset sample**.
+4. For the local Python API, send `POST /api/dataset/load` with JSON `{"path":"/path/to/collection.tsv","max_records":1000}`. For the hosted dashboard, upload a bounded TSV/TXT sample instead.
+5. Choose a sample limit (start with 1,000). The hosted dashboard accepts up to 10,000 passages.
 6. Go to **Ask your corpus**, enable **Use MS MARCO**, and submit a query.
 
 The loader streams records and stops at the selected maximum (100,000 maximum in this UI) rather than loading the full 8.8-million-passage collection into memory. Large samples require more RAM and can make retrieval slower. This loader expects the passage collection format `pid<TAB>passage`; it supports TSV/TXT, gzip-compressed text, and TAR.GZ archives containing the collection. It does not download the dataset automatically.

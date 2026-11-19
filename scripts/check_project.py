@@ -3,5 +3,5 @@ import compileall, subprocess, sys, re
 root=Path(__file__).resolve().parents[1]
 print('compileall:',compileall.compile_dir(str(root),quiet=1,rx=re.compile(r'\.venv|__pycache__|results')))
 print('required files:')
-for p in ['run.py','requirements.txt','config.yaml','api/main.py','web/index.html','web/styles.css','web/app.js','core/pipeline.py','experiments/run_experiment.py','tests/test_api.py']:
+for p in ['run.py','requirements/local.txt','config.yaml','api/main.py','web/index.html','web/styles.css','web/app.js','core/pipeline.py','experiments/run_experiment.py','tests/test_api.py']:
     print(p, (root/p).exists())
