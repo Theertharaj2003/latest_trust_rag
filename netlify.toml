@@ -1,0 +1,12 @@
+[build]
+  command = "node scripts/prepare-netlify.mjs"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "24"
+  PYTHON_VERSION = "3.13"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "private, no-store"

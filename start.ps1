@@ -7,7 +7,7 @@ if (-not (Test-Path '.venv\Scripts\python.exe')) {
     else { throw 'Python 3.10+ is required. Install Python and retry.' }
 }
 if (-not (Test-Path '.venv\Scripts\python.exe')) { throw 'Could not create .venv.' }
-& .venv\Scripts\python.exe -m pip install -r requirements.txt
+& .venv\Scripts\python.exe -m pip install -r requirements/local.txt
 if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed. Check pip output.' }
 Write-Host "TrustRAG: http://127.0.0.1:$Port (Ctrl+C to stop)"
 Write-Host 'Port in use? Run: .\start.ps1 -Port 8002'
