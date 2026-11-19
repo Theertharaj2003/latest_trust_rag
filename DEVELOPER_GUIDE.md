@@ -1,3 +1,5 @@
+> **Netlify runtime:** See the README deployment section for the Node.js API in `netlify/server/`, the persisted Drizzle schema in `db/schema.ts`, and the hosted CPU limits. This guide describes the original local Python research runtime. Python requirements now live at `python/requirements.txt`.
+
 # TrustRAG full-stack developer guide
 
 ## System architecture
@@ -85,7 +87,7 @@ From Windows PowerShell in the root directory:
 
 ```powershell
 py -3 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r python/requirements.txt
 .\.venv\Scripts\python.exe -m pytest -q
 .\.venv\Scripts\python.exe -m uvicorn api.main:app --host 127.0.0.1 --port 8001
 ```
